@@ -1,6 +1,7 @@
 # dataprocessing.py
 import pandas as pd
 import os
+## Dataset : We used the PAMAP2 dataset, which contains heart rate and activity type data, for human activity recognition. This dataset supports real-life scenarios like monitoring physical activities and detecting abnormal patterns.
 
 def load_and_preprocess_data(filepath):
     """Load and preprocess the dataset."""
