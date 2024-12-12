@@ -1,0 +1,27 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+type: command
+description: "Heart Rate Monitoring Pipeline"
+
+# Environment specifications
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04  # Base Docker image
+  conda_file: environment.yml                               # Conda environment file
+
+# Compute target
+compute:
+  target: azureml:YOUR_COMPUTE_CLUSTER_NAME                 # Replace with your compute cluster name
+
+# Job inputs and outputs
+inputs:
+  raw_dataset:
+    path: azureml://datastores/workspaceblobstore/paths/Dataset/PAMAP2.dat
+    mode: download
+
+outputs:
+  processed_dataset:
+    type: uri_folder
+    path: azureml://datastores/workspaceblobstore/paths/Dataset/PAMAP2_processed.dat
+
+# Command to run your script
+command: >
+  python Production_Code/main.py --input $(inputs.raw_dataset) --output $(outputs.processed_dataset)
