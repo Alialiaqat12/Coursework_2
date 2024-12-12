@@ -1,57 +1,50 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_report, accuracy_score
+import matplotlib.pyplot as plt
+import os
 
-def load_data(filepath):
-    """Load the dataset and assign column names."""
-    df = pd.read_csv(filepath, delimiter=' ', header=None)
+def train_and_visualize(df):
+    """Train a model and visualize results."""
+    print("Training model...")
 
-    # Dynamically generate column names based on the number of columns in the dataset
-    column_count = df.shape[1]
-    column_names = [f"Feature_{i+1}" for i in range(column_count)]
-    column_names[1] = "Activity Type"  # Assign meaningful name to Activity Type
-    column_names[2] = "Heart Rate"     # Assign meaningful name to Heart Rate
-    df.columns = column_names
-    return df
+    # Extract features (Heart Rate) and labels (Activity Type)
+    X = df[["Heart Rate"]]
+    y = df["Activity Type"]
 
-def preprocess_data(df):
-    """Preprocess the dataset."""
-    # Fill missing values
-    df["Heart Rate"].fillna(method="ffill", inplace=True)
+    # Split into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # Filter data if needed (e.g., remove invalid activity types)
-    df = df[df["Activity Type"].notna()]
-
-    # Select features and labels
-    features = df[["Heart Rate"]]  # Heart rate column
-    labels = df["Activity Type"]  # Activity type column
-
-    return features, labels
-
-def train_model(X_train, y_train):
-    """Train a Random Forest model."""
+    # Train a Random Forest Classifier
     model = RandomForestClassifier(n_estimators=100, random_state=42)
     model.fit(X_train, y_train)
-    return model
-
-if __name__ == "__main__":
-    # Replace with the correct file path
-    filepath = "Dataset/PAMAP2.dat"
-
-    # Load and preprocess the dataset
-    df = load_data(filepath)
-    features, labels = preprocess_data(df)
-
-    # Split data into training and testing sets
-    X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.2, random_state=42)
-
-    # Train the model
-    model = train_model(X_train, y_train)
-
-    # Make predictions
-    y_pred = model.predict(X_test)
 
     # Evaluate the model
+    y_pred = model.predict(X_test)
     print("Classification Report:\n", classification_report(y_test, y_pred))
-    print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
+    print("Accuracy Score:", accuracy_score(y_test, y_pred))
+
+    # Visualize Heart Rate vs. Activity Type
+    plt.figure(figsize=(10, 6))
+    plt.scatter(X["Heart Rate"], y, alpha=0.5, label="Actual Activities", color="blue")
+    plt.xlabel("Heart Rate")
+    plt.ylabel("Activity Type")
+    plt.title("Heart Rate vs Activity Type")
+    plt.legend()
+    plt.grid()
+    plt.show()
+
+if __name__ == "__main__":
+    # Replace with your dataset path
+    from dataprocessing import load_and_preprocess_data
+
+    filepath = "Dataset/PAMAP2.dat"
+    if not os.path.exists(filepath):
+        raise FileNotFoundError(f"Dataset not found at {filepath}")
+
+    # Load and preprocess the data
+    df = load_and_preprocess_data(filepath)
+
+    # Train the model and visualize
+    train_and_visualize(df)
