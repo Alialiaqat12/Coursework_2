@@ -1,22 +1,11 @@
 $schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
 code: .
-type: command
-description: "Heart Rate Monitoring Pipeline"  # This is the description of your job
-experiment_name: coursework2                   # This groups your jobs under the experiment name "coursework2"
-
-environment:
-  azureml: azureml://registries/azureml/environments/sklearn-1.1/versions/14
-
-compute: azureml:Coursework2-Compute
-
+command: python main.py --trainingdata ${{ inputs.training_data }}
 inputs:
-  raw_dataset:
+  training_data:
     type: uri_file
     path: azureml:PAMAP2_processed:1
-
-outputs:
-  processed_dataset:
-    type: uri_file
-    path: azureml:PAMAP2_processed:1
-command: >
-  python Production_Code/main.py --input ${{ inputs.raw_dataset }} --output ${{ outputs.processed_dataset }}
+environment: azureml://registries/azureml/environments/sklearn-1.5/versions/17
+compute: azureml:Coursework2-Compute
+experiment_name: practicalCW2
+description: PracticalCW2 demo
