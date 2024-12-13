@@ -6,6 +6,6 @@ inputs:
     type: uri_file
     path: azureml:PAMAP2_processed:1
 environment: azureml://registries/azureml/environments/sklearn-1.5/versions/17
-compute: azureml:Coursework2-Compute
+compute: Liaqat-A21
 experiment_name: practicalCW2
 description: PracticalCW2 demo
